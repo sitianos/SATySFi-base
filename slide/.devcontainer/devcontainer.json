@@ -1,0 +1,26 @@
+{
+  "name": "Write with SATySFi",
+  "build": {
+    "dockerfile": "../../Dockerfile",
+    "target": "slide-base"
+  },
+  // "onCreateCommand": ".devcontainer/on-create.sh",
+  // "postCreateCommand": "satyrographos install",
+  "remoteUser": "opam",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "pickoba.satysfi-workshop",
+        "tomoki1207.pdf"
+      ],
+      "settings": {
+        "satysfi-workshop.languageServer.enabled": true,
+        "satysfi-workshop.build.rootFile": "slide.saty",
+        "satysfi-workshop.mathPreview.when": "onHover",
+        "[satysfi]": {
+          "editor.snippetSuggestions": "none"
+        }
+      }
+    }
+  }
+}
