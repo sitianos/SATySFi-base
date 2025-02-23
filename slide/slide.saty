@@ -1,0 +1,102 @@
+@require: figbox/figbox
+@require: enumitem/enumitem
+@require: base/color-ext
+@require: math
+@require: azmath/azmath
+@require: easytable/easytable
+@import: local
+
+open FigBox
+open SlydifiOverlay
+open Math
+open EasyTableAlias
+
+let-inline ctx \cjk it =
+  let ctx = ctx |> set-dominant-narrow-script Kana in
+  read-inline ctx it
+
+let fancy-config = (|
+  SlydifiThemeAkasaka.default-config with
+    font-frame-title = (fun ctx -> ctx |> SlydifiThemeAkasaka.default-config#font-frame-title |> set-font-size 28pt);
+%    color-bg = Color.of-css `lightcyan`;
+%    color-emph = Color.of-css `darkred`;
+    font-normal = (fun ctx -> ctx |> SlydifiThemeAkasaka.default-config#font-normal |> set-font-size 22.5pt);
+    length-frame-title-height = 40pt;
+|)
+
+let-block ctx +skip len = block-skip len
+
+let-inline ctx \inline-fil = inline-fil
+let-inline ctx \skip = inline-skip
+
+let-inline ctx \mul mag it =
+  read-inline (set-font-size (get-font-size ctx *' mag) ctx) it
+
+let-block ctx +center its =
+  List.fold-left (fun acc it ->
+    acc +++ read-block ctx '<
+      +p{\inline-fil;#it;}
+    >
+  ) block-nil its
+
+in
+
+document '<
+  +set-config(fancy-config);
+
+  +make-title(|
+    title = {|Title|};
+    author = {|Author Name|Affiliations|};
+    date = {|2020.1.1|};
+  |);
+  +frame{Base Commands}<
+    +fig-on-left (
+      vconcat?:align-center [
+        include-image-with-height 8cm `./resources/cover.pdf`;
+        gap 0.5cm;
+        textbox{caption};
+      ] |> frame 1pt Color.black
+    )<
+      +itemize(
+        fun ctx idxlst -> (let fmt = EnumitemAlias.bullet ctx idxlst in 
+        (|
+          fmt with
+          margin-top = 10pt;
+          margin-bottom = 20pt;
+          indent = (fun x -> x *' 1.5);
+        |) ))<
+        +item({1})?:(EnumitemAlias.paren-arabic)<
+          +p{text}
+          +item{hoge}<>
+          +item{fuga}<>
+        >
+        +item{2}<
+        >
+      >
+    >
+  >
+  +frame{Mathmatical Functions}<
+    +itemize(EnumitemAlias.paren-arabic)<
+      +item{align}<
+        +align([
+          ${| e^{i\pi} + 1 | = \mathrm{cos}(\pi) + \mathrm{sin}(\pi) + 1 |};
+          ${| | = 0 |};
+        ]);
+      >
+      +item{gather}<
+        +gather(${
+          | \p{x + y}^2 = x^2 + 2xy + y^2 \notag
+          | \p{x + a}\p{x + b} = x^2 + \p{a + b} x + ab
+          |});
+      >
+      +item{alignat}<
+        +alignat(2)(${
+          | \p{x + y}^2 | = x^2 + 2xy + y^2
+          | \p{x - y}^2 | = x^2 - 2xy + y^2
+          | \p{x + a}\p{x + b} | = x^2 + \p{a + b}x + ab
+          | \p{x + y}\p{x - y} | = x^2 - y^2
+          |});
+      >
+    >
+  >
+>
